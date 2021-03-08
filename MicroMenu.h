@@ -13,8 +13,6 @@
 	#include <stddef.h>
 	#include <stdint.h>
 
-	#include "MenuConfig.h"
-
 	/** Type define for a menu item. Menu items should be initialized via the helper
 	 *  macro \ref MENU_ITEM(), not created from this type directly in user-code.
 	 */
@@ -25,7 +23,7 @@
 		const struct Menu_Item *Child; /**< Pointer to the child menu item of this menu item */
 		void (*SelectCallback)(void); /**< Pointer to the optional menu-specific select callback of this menu item */
 		void (*EnterCallback)(void); /**< Pointer to the optional menu-specific enter callback of this menu item */
-		const char Text[]; /**< Menu item text to pass to the menu display callback function */
+		void (*RenderCallback)(void); /**< Menu item text to pass to the menu display callback function */
 	} Menu_Item_t;
 
 	/** Creates a new menu item entry with the specified links and callbacks.
@@ -39,26 +37,26 @@
 	 *  \param[in] EnterFunc   Function callback to execute when the menu item is entered, or \c NULL for no callback.
 	 */
 	#define MENU_ITEM(Name, Next, Previous, Parent, Child, SelectFunc, EnterFunc, Text) \
-		extern Menu_Item_t MENU_ITEM_STORAGE Next;     \
-		extern Menu_Item_t MENU_ITEM_STORAGE Previous; \
-		extern Menu_Item_t MENU_ITEM_STORAGE Parent;   \
-		extern Menu_Item_t MENU_ITEM_STORAGE Child;  \
-		Menu_Item_t MENU_ITEM_STORAGE Name = {&Next, &Previous, &Parent, &Child, SelectFunc, EnterFunc, Text}
+		extern Menu_Item_t Next;     \
+		extern Menu_Item_t Previous; \
+		extern Menu_Item_t Parent;   \
+		extern Menu_Item_t Child;  \
+		Menu_Item_t Name = {&Next, &Previous, &Parent, &Child, SelectFunc, EnterFunc, Text}
 
 	/** Relative navigational menu entry for \ref Menu_Navigate(), to move to the menu parent. */
-	#define MENU_PARENT         MENU_ITEM_READ_POINTER(&Menu_GetCurrentMenu()->Parent)
+	#define MENU_PARENT         &Menu_GetCurrentMenu()->Parent
 
 	/** Relative navigational menu entry for \ref Menu_Navigate(), to move to the menu child. */
-	#define MENU_CHILD          MENU_ITEM_READ_POINTER(&Menu_GetCurrentMenu()->Child)
+	#define MENU_CHILD          &Menu_GetCurrentMenu()->Child
 
 	/** Relative navigational menu entry for \ref Menu_Navigate(), to move to the next linked menu item. */
-	#define MENU_NEXT           MENU_ITEM_READ_POINTER(&Menu_GetCurrentMenu()->Next)
+	#define MENU_NEXT           &Menu_GetCurrentMenu()->Next
 
 	/** Relative navigational menu entry for \ref Menu_Navigate(), to move to the previous linked menu item. */
-	#define MENU_PREVIOUS       MENU_ITEM_READ_POINTER(&Menu_GetCurrentMenu()->Previous)
+	#define MENU_PREVIOUS       &Menu_GetCurrentMenu()->Previous
 
 	/** Null menu entry, used in \ref MENU_ITEM() definitions where no menu link is to be made. */
-	extern Menu_Item_t MENU_ITEM_STORAGE NULL_MENU;
+	extern Menu_Item_t NULL_MENU;
 
 	/** Retrieves the currently selected meny item.
 	 *

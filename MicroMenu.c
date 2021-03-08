@@ -14,7 +14,7 @@
  *  a \ref MENU_ITEM() definition, i.e. to indicate that a
  *  menu has no linked parent, child, next or previous entry.
  */
-Menu_Item_t PROGMEM NULL_MENU = {0};
+Menu_Item_t NULL_MENU = {0};
 
 /** \internal
  *  Pointer to the generic menu text display function
@@ -42,8 +42,10 @@ void Menu_Navigate(Menu_Item_t* const NewMenu)
 
 	CurrentMenuItem = NewMenu;
 
+	void (*RenderCallback)(void) = MENU_ITEM_READ_POINTER(&CurrentMenuItem->RenderCallback);
+
 	if (MenuWriteFunc)
-		MenuWriteFunc(CurrentMenuItem->Text);
+		RenderCallback();
 
 	void (*SelectCallback)(void) = MENU_ITEM_READ_POINTER(&CurrentMenuItem->SelectCallback);
 
