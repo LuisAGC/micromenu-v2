@@ -44,17 +44,26 @@
 		Menu_Item_t Name = {&Next, &Previous, &Parent, &Child, SelectFunc, EnterFunc, Text}
 
 	/** Relative navigational menu entry for \ref Menu_Navigate(), to move to the menu parent. */
-	#define MENU_PARENT         &Menu_GetCurrentMenu()->Parent
+	#define MENU_PARENT         Menu_GetCurrentMenu()->Parent
 
 	/** Relative navigational menu entry for \ref Menu_Navigate(), to move to the menu child. */
-	#define MENU_CHILD          &Menu_GetCurrentMenu()->Child
+	#define MENU_CHILD          Menu_GetCurrentMenu()->Child
 
 	/** Relative navigational menu entry for \ref Menu_Navigate(), to move to the next linked menu item. */
-	#define MENU_NEXT           &Menu_GetCurrentMenu()->Next
+	#define MENU_NEXT           Menu_GetCurrentMenu()->Next
 
 	/** Relative navigational menu entry for \ref Menu_Navigate(), to move to the previous linked menu item. */
-	#define MENU_PREVIOUS       &Menu_GetCurrentMenu()->Previous
+	#define MENU_PREVIOUS       Menu_GetCurrentMenu()->Previous
 
+    /** Relative navigational menu entry for \ref EnterCallback(), to execute the enter callback function of the current menu. */
+	#define MENU_ENTER          Menu_GetCurrentMenu()->EnterCallback()
+
+    /** Relative navigational menu entry for \ref SelectCallback(), to execute the select callback function of the current menu. */
+	#define MENU_SELECT         Menu_GetCurrentMenu()->SelectCallback()
+    
+    /** Relative navigational menu entry for \ref RenderCallback(), to execute the render callback function of the current menu. */
+	#define MENU_RENDER           Menu_GetCurrentMenu()->RenderCallback()
+    
 	/** Null menu entry, used in \ref MENU_ITEM() definitions where no menu link is to be made. */
 	extern Menu_Item_t NULL_MENU;
 
@@ -69,17 +78,11 @@
 	 * \param[in] NewMenu  Pointer to the absolute menu item to select, or one of \ref MENU_PARENT,
 	 *                     \ref MENU_CHILD, \ref MENU_NEXT or \ref MENU_PREVIOUS for relative navigation.
 	 */
-	void Menu_Navigate(Menu_Item_t* const NewMenu);
-
-	/** Configures the menu text write callback function, fired for all menu items. Within this callback
-	 *  function the user should implement code to display the current menu text stored in \ref MENU_ITEM_STORAGE
-	 *  memory space.
-	 *
-	 *  \ref WriteFunc  Pointer to a callback function to execute for each selected menu item.
-	 */
-	void Menu_SetGenericWriteCallback(void (*WriteFunc)(const char* Text));
+	void Menu_Navigate(Menu_Item_t* NewMenu);
 
 	/** Enters the currently selected menu item, running its configured callback function (if any). */
 	void Menu_EnterCurrentItem(void);
-
+    
+    /** Enters the currently selected menu item, running its configured callback function (if any). */
+	void Menu_SelectCurrentItem(void);
 #endif

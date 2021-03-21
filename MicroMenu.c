@@ -35,22 +35,17 @@ Menu_Item_t* Menu_GetCurrentMenu(void)
 	return CurrentMenuItem;
 }
 
-void Menu_Navigate(Menu_Item_t* const NewMenu)
+void Menu_Navigate(Menu_Item_t* NewMenu)
 {
 	if ((NewMenu == &NULL_MENU) || (NewMenu == NULL))
 		return;
 
 	CurrentMenuItem = NewMenu;
 
-	void (*RenderCallback)(void) = MENU_ITEM_READ_POINTER(&CurrentMenuItem->RenderCallback);
+	void (*RenderCallback)(void) = CurrentMenuItem->RenderCallback;
 
-	if (MenuWriteFunc)
+	if (RenderCallback)
 		RenderCallback();
-
-	void (*SelectCallback)(void) = MENU_ITEM_READ_POINTER(&CurrentMenuItem->SelectCallback);
-
-	if (SelectCallback)
-		SelectCallback();
 }
 
 void Menu_SetGenericWriteCallback(void (*WriteFunc)(const char* Text))
@@ -64,8 +59,19 @@ void Menu_EnterCurrentItem(void)
 	if ((CurrentMenuItem == &NULL_MENU) || (CurrentMenuItem == NULL))
 		return;
 
-	void (*EnterCallback)(void) = MENU_ITEM_READ_POINTER(&CurrentMenuItem->EnterCallback);
+	void (*EnterCallback)(void) = CurrentMenuItem->EnterCallback;
 
 	if (EnterCallback)
 		EnterCallback();
+}
+
+void Menu_SelectCurrentItem(void)
+{
+	if ((CurrentMenuItem == &NULL_MENU) || (CurrentMenuItem == NULL))
+		return;
+
+	void (*SelectCallback)(void) = CurrentMenuItem->SelectCallback;
+
+	if (SelectCallback)
+		SelectCallback();
 }
